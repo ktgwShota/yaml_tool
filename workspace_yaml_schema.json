@@ -1,0 +1,665 @@
+{
+  "$id": "workspace_yaml_schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Scenario YAML ",
+  "type": "object",
+  "minProperties": 1,
+  "required": ["node_groups"],
+  "additionalProperties": false,
+  "properties": {
+    "node_groups": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "ノードグループの定義。複数のノードグループをぶら下げることができますyo!。",
+      "patternProperties": {
+        "": {
+          "type": "object",
+          "description": "ノードグループの定義。",
+          "minProperties": 1,
+          "maxProperties": 1,
+          "required": ["contents"],
+          "additionalProperties": false,
+          "properties": {
+            "contents": {
+              "type": "array",
+              "description": "ノードグループの内容",
+              "minLength": 1,
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "description": "テキストメッセージ",
+                    "required": ["lineText"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "lineText": {
+                        "type": "string"
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "画像",
+                    "required": ["lineImage"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "lineImage": {
+                        "type": "object",
+                        "description": "画像",
+                        "required": ["original", "preview"],
+                        "additionalProperties": false,
+                        "properties": {
+                          "original": {
+                            "$ref": "#/definitions/uri"
+                          },
+                          "preview": {
+                            "$ref": "#/definitions/uri"
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "縦並び選択肢",
+                    "required": ["buttonBubble"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "buttonBubble": {
+                        "type": "object",
+                        "required": ["notification_text", "text", "actions"],
+                        "additionalProperties": false,
+                        "properties": {
+                          "notification_text": { "type": "string" },
+                          "text": { "type": "string" },
+                          "title": { "type": "string" },
+                          "actions": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/definitions/action"
+                            }
+                          },
+                          "image": {
+                            "$ref": "#/definitions/image"
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "横並び選択肢",
+                    "required": ["selections"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "selections": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["label", "dest"],
+                          "additionalProperties": false,
+                          "properties": {
+                            "label": {
+                              "type": "string"
+                            },
+                            "dest": {
+                              "type": "string"
+                            },
+                            "image_url": {
+                              "$ref": "#/definitions/uri"
+                            },
+                            "tags": { "$ref": "#/definitions/tags" },
+                            "action_type": {
+                              "default": "message",
+                              "type": "string"
+                            },
+                            "location_tag": {
+                              "type": "object",
+                              "required": ["latitude_key", "longitude_key"],
+                              "properties": {
+                                "latitude_key": { "type": "string" },
+                                "longitude_key": { "type": "string" }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "2列選択肢",
+                    "required": ["selectionContainer"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "selectionContainer": {
+                        "required": ["notification_text", "title", "text", "ordering_type", "column_size", "buttons"],
+                        "additionalProperties": false,
+                        "properties": {
+                          "notification_text": { "type": "string" },
+                          "title": { "type": "string" },
+                          "text": { "type": "string" },
+                          "ordering_type": {
+                            "default": "fixed",
+                            "enum": ["fixed", "random"]
+                          },
+                          "column_size": { "type": "number" },
+                          "buttons": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": ["label", "action"],
+                              "properties": {
+                                "label": { "type": "string" },
+                                "action": { "$ref": "#/definitions/action" },
+                                "tags": { "$ref": "#/definitions/tags" }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "タグアップデート",
+                    "required": ["tagUpdate"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "tagUpdate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "tags": {
+                            "description": "definitions/tagsとは微妙に構造が異なるので独自定義",
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": ["string", "integer", "null"]
+                                },
+                                "method": {
+                                  "description": "TODO: enum: ['insert', 'insert_current_time'] にしたい",
+                                  "type": "string"
+                                }
+                              },
+                              "description": "insertならvalueが必須だが、そうでないなら必須ではない",
+                              "if": {
+                                "properties": {
+                                  "method": { "const": "insert" }
+                                }
+                              },
+                              "then": {
+                                "required": ["key", "value"]
+                              },
+                              "else": {
+                                "required": ["key"]
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "分岐",
+                    "required": ["branches"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "branches": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "description": "分岐",
+                          "required": ["conditions", "dest"],
+                          "additionalProperties": false,
+                          "properties": {
+                            "conditions": {
+                              "type": ["array", "null"],
+                              "items": {
+                                "type": ["string"]
+                              }
+                            },
+                            "dest": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "カルーセル",
+                    "required": ["carousel"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "carousel": {
+                        "required": ["notification_text", "columns"],
+                        "additionalProperties": false,
+                        "properties": {
+                          "notification_text": {
+                            "type": "string"
+                          },
+                          "columns": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": ["image_url", "action"],
+                              "properties": {
+                                "image_url": {
+                                  "$ref": "#/definitions/uri"
+                                },
+                                "image_aspect_ratio": {
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "type": "string"
+                                },
+                                "text": {
+                                  "type": "string"
+                                },
+                                "action": {
+                                  "$ref": "#/definitions/action"
+                                },
+                                "button_text_color": {
+                                  "type": "string"
+                                },
+                                "button_bg_color": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "画像カルーセル",
+                    "required": ["imageCarousel"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "imageCarousel": {
+                        "type": "object",
+                        "required": ["notification_text", "columns"],
+                        "additionalProperties": false,
+                        "properties": {
+                          "notification_text": {
+                            "type": "string"
+                          },
+                          "columns": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": ["image"],
+                              "properties": {
+                                "image": {
+                                  "type": "object",
+                                  "required": ["url"],
+                                  "properties": {
+                                    "url": {
+                                      "$ref": "#/definitions/uri"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "テキストインプット",
+                    "required": ["textInput"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "textInput": {
+                        "items": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "required": ["tag_key"],
+                              "additionalProperties": true,
+                              "properties": {
+                                "tag_key": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            {
+                              "type": "object",
+                              "required": ["personal_info_key"],
+                              "additionalProperties": true,
+                              "properties": {
+                                "personal_info_key": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "API実行",
+                    "required": ["apiCall"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "apiCall": {
+                        "required": ["target_api", "method", "headers", "request_body", "parsers"],
+                        "additionalProperties": false,
+                        "properties": {
+                          "target_api": {
+                            "type": "string"
+                          },
+                          "method": {
+                            "type": "string"
+                          },
+                          "headers": {
+                            "type": "object"
+                          },
+                          "request_body": {
+                            "oneOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object"
+                              }
+                            ]
+                          },
+                          "parsers": {
+                            "type": "array",
+                            "items": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "required": ["type", "tag_key", "query"],
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "tag_key": {
+                                      "type": "string"
+                                    },
+                                    "query": {
+                                      "type": "string"
+                                    },
+                                    "regex_index": {
+                                      "type": "integer"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "node_name": { "type": "string" }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "ランダム遷移",
+                    "required": ["randomReference"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "node_name": { "type": "string" },
+                      "randomReference": {
+                        "type": "object",
+                        "required": ["references"],
+                        "properties": {
+                          "references": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": ["dest", "ratio"],
+                              "properties": {
+                                "dest": {
+                                  "type": "string"
+                                },
+                                "ratio": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 100
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "richmenu switch",
+                    "additionalProperties": false,
+                    "required": ["lineRichmenuswitch"],
+                    "properties": {
+                      "lineRichmenuswitch": {
+                        "type": "object",
+                        "properties": {
+                          "richmenu_alias_id": {
+                            "type": ["integer", "string", "null"]
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "動画",
+                    "required": ["lineVideo"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "lineVideo": {
+                        "type": "object",
+                        "description": "動画",
+                        "required": ["original", "preview"],
+                        "additionalProperties": false,
+                        "properties": {
+                          "original": {
+                            "$ref": "#/definitions/uri"
+                          },
+                          "preview": {
+                            "$ref": "#/definitions/uri"
+                          },
+                          "dest": {
+                            "type": "string"
+                          },
+                          "tags": { "$ref": "#/definitions/tags" }
+                        }
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "jsonノード",
+                    "required": ["json_execution"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "json_execution": {
+                        "type": "string",
+                        "description": "json形式でのnode",
+                        "additionalProperties": false
+                      },
+                      "node_name": {
+                        "$ref": "#/definitions/node_name"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "tag": {
+      "type": "object",
+      "required": ["key"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": ["string", "integer", "null"]
+        },
+        "type": {
+          "enum": ["assign", "calculation", "append"]
+        }
+      },
+      "dependentRequired": {
+        "type": ["value"]
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/tag"
+      }
+    },
+    "image": {
+      "type": "object",
+      "required": ["url"],
+      "properties": {
+        "bg_color": {
+          "type": "string"
+        },
+        "aspect_ratio": {
+          "type": "string"
+        },
+        "size": {
+          "type": "string"
+        },
+        "url": {
+          "$ref": "#/definitions/uri"
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "enum": ["postback", "uri", "datetimepicker"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "postback" } }
+          },
+          "then": {
+            "properties": {
+              "display_text": { "type": "string" },
+              "message_text": { "type": "string" },
+              "data": { "type": "string" },
+              "dest": { "type": "string" },
+              "tags": { "$ref": "#/definitions/tags" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "uri" } }
+          },
+          "then": {
+            "required": ["uri"],
+            "properties": {
+              "display_text": { "type": "string" },
+              "uri": {  "$ref": "#/definitions/uri" },
+              "dest": { "type": "string" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "datetimepicker" } }
+          },
+          "then": {
+            "required": ["display_text", "mode", "initial", "max", "min"],
+            "properties": {
+              "display_text": { "type": "string" },
+              "mode": { "type": "string" },
+              "initial": { "type": "string" },
+              "max": { "type": "string" },
+              "min": { "type": "string" },
+              "tag": {
+                "type": "object",
+                "description": "valueが不要なのでcomponent の tagを利用しない",
+                "properties": {
+                  "key": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "node_name": {
+      "type": "string",
+      "description": "ノード名"
+    },
+    "uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(http|\\{\\{)"
+    }
+  }
+}
