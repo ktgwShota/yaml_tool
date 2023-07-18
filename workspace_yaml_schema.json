@@ -333,12 +333,6 @@
                                       "$ref": "#/definitions/uri"
                                     }
                                   }
-                                },
-                                "action": {
-                                  "type": "array",
-                                  "items": {
-                                    "$ref": "#/definitions/action"
-                                  }
                                 }
                               }
                             }
@@ -663,7 +657,6 @@
     },
     "uri": {
       "type": "string",
-      "format": "uri",
       "pattern": "^(http|\\{\\{.+\\}\\}.*$)"
     }
   }
