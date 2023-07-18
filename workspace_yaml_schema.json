@@ -333,6 +333,9 @@
                                       "$ref": "#/definitions/uri"
                                     }
                                   }
+                                },
+                                "action": {
+                                  "$ref": "#/definitions/action"
                                 }
                               }
                             }
@@ -447,7 +450,6 @@
                     "required": ["randomReference"],
                     "additionalProperties": false,
                     "properties": {
-                      "node_name": { "type": "string" },
                       "randomReference": {
                         "type": "object",
                         "required": ["references"],
