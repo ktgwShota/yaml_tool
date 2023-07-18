@@ -335,7 +335,10 @@
                                   }
                                 },
                                 "action": {
-                                  "$ref": "#/definitions/action"
+                                  "type": "array",
+                                  "items": {
+                                    "$ref": "#/definitions/action"
+                                  }
                                 }
                               }
                             }
@@ -625,7 +628,7 @@
             "required": ["uri"],
             "properties": {
               "display_text": { "type": "string" },
-              "uri": {  "$ref": "#/definitions/uri" },
+              "uri": { "type": "string" },
               "dest": { "type": "string" }
             }
           }
@@ -661,7 +664,7 @@
     "uri": {
       "type": "string",
       "format": "uri",
-      "pattern": "^(http|\\{\\{)"
+      "pattern": "^(http|\\{\\{.+\\}\\}.*$)"
     }
   }
 }
