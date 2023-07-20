@@ -333,6 +333,9 @@
                                       "$ref": "#/definitions/uri"
                                     }
                                   }
+                                },
+                                "action": {
+                                  "$ref": "#/definitions/action"
                                 }
                               }
                             }
@@ -622,7 +625,7 @@
             "required": ["uri"],
             "properties": {
               "display_text": { "type": "string" },
-              "uri": { "type": "string" },
+              "uri": { "$ref": "#/definitions/uri" },
               "dest": { "type": "string" }
             }
           }
